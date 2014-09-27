@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebViewClient;
+import android.webkit.WebSettings;
 import android.net.wifi.SupplicantState;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -65,10 +66,6 @@ public class MainActivity extends Activity {
         boolean b = wifiManager.enableNetwork(res, true);
         log("enableNetwork returned " + b );
 
-        WebView webView = (WebView) findViewById(R.id.webView1);
-        webView.setWebViewClient(new MyBrowser());
-        webView.getSettings().setJavaScriptEnabled(true);
-        //webView.loadUrl("http://www.google.com");
 
 
         for(int i = 0; i < 10; i++) {
@@ -86,16 +83,17 @@ public class MainActivity extends Activity {
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         log("connected: " + mWifi.isConnected());
+
+        final WebView webView = (WebView) findViewById(R.id.webView1);
+        webView.setWebViewClient(new Callback());
+        webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("https://webauth.internal/login.html?redirect=www.yahoo.com/");
-        //if wifi connected
     }
 
-
-    private class MyBrowser extends WebViewClient {
+    private class Callback extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl("https://webauth.internal/login.html?redirect=www.yahoo.com/");
-            return true;
+            return (false);
         }
     }
 
