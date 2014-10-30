@@ -9,6 +9,7 @@ import android.webkit.WebSettings;
 import android.net.wifi.SupplicantState;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.widget.Toast;
 import android.net.NetworkInfo;
 import android.webkit.WebView;
 import android.net.wifi.WifiInfo;
@@ -22,6 +23,7 @@ import android.util.Log;
 public class MainActivity extends Activity {
 
     private Context theC;
+    private Activity theA = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         this.theC = this;
+        this.theA = this;
 
         /*ConnectivityManager connManager = (ConnectivityManager) theC.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -68,7 +71,7 @@ public class MainActivity extends Activity {
 
 
 
-        for(int i = 0; i < 10; i++) {
+        for(int i = 0; i < 5; i++) {
             SupplicantState supState;
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             supState = wifiInfo.getSupplicantState();
@@ -85,7 +88,8 @@ public class MainActivity extends Activity {
         log("connected: " + mWifi.isConnected());
 
         final WebView webView = (WebView) findViewById(R.id.webView1);
-        webView.setWebViewClient(new Callback());
+        //webView.setWebViewClient(new Callback());
+        webView.setWebViewClient(new WebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("https://webauth.internal/login.html?redirect=www.yahoo.com/");
     }
@@ -93,7 +97,12 @@ public class MainActivity extends Activity {
     private class Callback extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return (false);
+            view.loadUrl(url);
+            return false;
+        }
+        @Override
+        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            Toast.makeText(theA, description, Toast.LENGTH_SHORT).show();
         }
     }
 
